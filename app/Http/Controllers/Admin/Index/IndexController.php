@@ -16,7 +16,7 @@ class IndexController extends Controller
     {
         //
 
-        return "后台";
+        return view('admin.index');
     }
 
     /**
