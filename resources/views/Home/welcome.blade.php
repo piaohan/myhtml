@@ -12,76 +12,70 @@
     <style type="text/css">
         html{height:100%}
         body{height:100%;margin:0px;padding:0px}
-        #container{height:90%;background-color: cornflowerblue}
+        .container{height:90%;background-color: cornflowerblue}
     </style>
 </head>
 <body>
-<div></div>
-<div id="container">我是地图</div>
-<script type="text/javascript">
-    //init
-    var map = new BMap.Map("container");
-    var point = new BMap.Point(116.404, 39.915);
-    map.centerAndZoom(point, 15);
-    window.setTimeout(function(){
-        map.panTo(new BMap.Point(116.409, 39.918));
-    }, 2000);
-
-
-    //增加控件
-//var map = new BMap.Map("container");
-//map.centerAndZoom(new BMap.Point(116.404, 39.915), 11);
-//map.addControl(new BMap.NavigationControl());
-//map.addControl(new BMap.NavigationControl());
-//map.addControl(new BMap.ScaleControl());
-//map.addControl(new BMap.OverviewMapControl());
-//map.addControl(new BMap.MapTypeControl());
-//map.setCurrentCity("北京"); // 仅当设置城市信息时，MapTypeControl的切换功能才能可用
-
-//    //标注
-//    var map = new BMap.Map("container");
-//    var point = new BMap.Point(116.404, 39.915);
-//    map.centerAndZoom(point, 15);
-//    var marker = new BMap.Marker(point);        // 创建标注
-//    map.addOverlay(marker);                     // 将标注添加到地图中
-
-
-//    //定义标注图标
-//    var map = new BMap.Map("container");
-//    var point = new BMap.Point(116.404, 39.915);
-//    map.centerAndZoom(point, 15);  // 编写自定义函数，创建标注
-//    function addMarker(point, index){  // 创建图标对象
-//        var myIcon = new BMap.Icon("markers.png", new BMap.Size(23, 25), {
-//// 指定定位位置。
-//// 当标注显示在地图上时，其所指向的地理位置距离图标左上
-//// 角各偏移10像素和25像素。您可以看到在本例中该位置即是
-//            // 图标中央下端的尖角位置。
-//            offset: new BMap.Size(10, 25),
-//            // 设置图片偏移。
-//            // 当您需要从一幅较大的图片中截取某部分作为标注图标时，您
-//            // 需要指定大图的偏移位置，此做法与css sprites技术类似。
-//            imageOffset: new BMap.Size(0, 0 - index * 25)   // 设置图片偏移
-//        });
-//// 创建标注对象并添加到地图
-//        var marker = new BMap.Marker(point, {icon: myIcon});
-//        map.addOverlay(marker);
-//    }
-//    // 随机向地图添加10个标注
-//    var bounds = map.getBounds();
-//    var lngSpan = bounds.maxX - bounds.minX;
-//    var latSpan = bounds.maxY - bounds.minY;
-//    for (var i = 0; i < 10; i ++) {
-//        var point = new BMap.Point(bounds.minX + lngSpan * (Math.random() * 0.7 + 0.15),
-//            bounds.minY + latSpan * (Math.random() * 0.7 + 0.15));
-//        addMarker(point, i);
-//    }
-
-//        //标注事件
-//        marker.addEventListener("click", function(){
-//            alert("您点击了标注");
-//        });
-
-
-</script>
+<div class="container" style="border:#ccc solid 1px;font-size:12px" id="map"></div>
+<span><h3 style="margin-left:20px;float:left;">请住公寓</h3></span><button style="margin-top:20px;background-color:yellow;float:right;">登录(没素材)</button>
 </body>
+<script type="text/javascript">
+    //创建和初始化地图函数：
+    function initMap(){
+      createMap();//创建地图
+      setMapEvent();//设置地图事件
+      addMapControl();//向地图添加控件
+      addMapOverlay();//向地图添加覆盖物
+    }
+    function createMap(){ 
+      map = new BMap.Map("map"); 
+      map.centerAndZoom(new BMap.Point(116.403874,39.914889),12);
+    }
+    function setMapEvent(){
+      map.enableScrollWheelZoom();
+      map.enableKeyboard();
+      map.enableDragging();
+      map.enableDoubleClickZoom()
+    }
+    function addClickHandler(target,window){
+      target.addEventListener("click",function(){
+        target.openInfoWindow(window);
+      });
+    }
+    function addMapOverlay(){
+      var markers = [
+        {content:"中关村学区",title:"小区名,中关村学区",imageOffset: {width:-69,height:-21},position:{lat:39.976315,lng:116.318142}},
+        {content:"小雅宝公寓 国贸校区",title:"小雅宝公寓 国贸校区",imageOffset: {width:0,height:-21},position:{lat:39.952068,lng:116.417672}}
+      ];
+      for(var index = 0; index < markers.length; index++ ){
+        var point = new BMap.Point(markers[index].position.lng,markers[index].position.lat);
+        var marker = new BMap.Marker(point,{icon:new BMap.Icon("http://api.map.baidu.com/lbsapi/createmap/images/icon.png",new BMap.Size(20,25),{
+          imageOffset: new BMap.Size(markers[index].imageOffset.width,markers[index].imageOffset.height)
+        })});
+        var label = new BMap.Label(markers[index].title,{offset: new BMap.Size(25,5)});
+        var opts = {
+          width: 200,
+          title: markers[index].title,
+          enableMessage: false
+        };
+        var infoWindow = new BMap.InfoWindow(markers[index].content,opts);
+        marker.setLabel(label);
+        addClickHandler(marker,infoWindow);
+        map.addOverlay(marker);
+      };
+    }
+    //向地图添加控件
+    function addMapControl(){
+      var scaleControl = new BMap.ScaleControl({anchor:BMAP_ANCHOR_BOTTOM_LEFT});
+      scaleControl.setUnit(BMAP_UNIT_IMPERIAL);
+      {{-- map.addControl(scaleControl); --}}
+      var navControl = new BMap.NavigationControl({anchor:BMAP_ANCHOR_TOP_LEFT,type:BMAP_NAVIGATION_CONTROL_LARGE});
+      map.addControl(navControl);
+      var overviewControl = new BMap.OverviewMapControl({anchor:BMAP_ANCHOR_BOTTOM_RIGHT,isOpen:true});
+      {{-- map.addControl(overviewControl); --}}
+    }
+    var map;
+      initMap();
+  </script>
+
 </html>
