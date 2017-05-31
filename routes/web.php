@@ -20,9 +20,12 @@ Route::group(array('namespace' => HOMENAME), function () {
     Route::resource('/', 'IndexController');
     Route::resource('/user', 'UserController');
 });
-//
+
 ////后台
 Route::group(array('namespace' => ADMINNAME, 'prefix' => ADMIN), function () {
     Route::resource('/', 'IndexController');
-    Route::resource('/users', 'UserController');
+    Route::resource('/login', 'LoginController');
+    Route::resource('/users', 'UsersController');
+    Route::resource('/locked', 'LockedController');
+    
 });

@@ -12,7 +12,7 @@
     <style type="text/css">
         html{height:100%}
         body{height:100%;margin:0px;padding:0px}
-        .container{height:90%;background-color: cornflowerblue}
+        .container{height:80%;background-color: cornflowerblue}
     </style>
 </head>
 <body>
