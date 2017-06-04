@@ -14,7 +14,7 @@ class LoginController extends Controller
      */
     public function index()
     {
-        return"登录";
+        return view('admin.login');
     }
 
     /**
